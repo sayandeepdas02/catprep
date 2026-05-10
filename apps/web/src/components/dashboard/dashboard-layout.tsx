@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Sidebar } from './sidebar';
 import { TopNavbar } from './top-navbar';
+import { KeyboardShortcutsModal } from '@/components/keyboard-shortcuts/shortcut-modal';
 import { cn } from '@/lib/utils';
 
 interface DashboardLayoutProps {
@@ -27,6 +28,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <TopNavbar />
         <main className="p-6">{children}</main>
       </div>
+      <KeyboardShortcutsModal />
     </div>
   );
 }
