@@ -1,0 +1,118 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Testing
+coverage/
+
+# Next.js
+.next/
+out/
+build/
+
+# Production
+dist/
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# Build outputs
+apps/web/.next/
+apps/server/dist/
+
+# Temp
+tmp/
+temp/
+*.tmp
+
+# Package artifacts
+packages/*/dist/
+packages/*/node_modules/
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Cache
+.cache/
+.parcel-cache/
+.vercel/
+
+# Media
+*.mp4
+*.mov
+*.avi
+*.webm
+*.ogg
+*.mp3
+*.wav
+*.flac
+*.aac
+*.m4a
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.ico
+*.bmp
+*.tiff
+
+# Documents
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+
+# Compressed
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.tar.bz2
+
+# Secrets (NEVER commit these)
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+credentials.json
+service-account.json
+*.secret
+*.token

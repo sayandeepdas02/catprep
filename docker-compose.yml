@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: techscholars-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: techscholars
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - techscholars-network
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: techscholars-server
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - MONGODB_URI=mongodb://mongodb:27017/techscholars
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+    networks:
+      - techscholars-network
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: ../Dockerfile.web
+    container_name: techscholars-web
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=http://server:3001/api
+      - NEXT_PUBLIC_SOCKET_URL=http://server:3001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    networks:
+      - techscholars-network
+
+volumes:
+  mongo_data:
+
+networks:
+  techscholars-network:
+    driver: bridge
