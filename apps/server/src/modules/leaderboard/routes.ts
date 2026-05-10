@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { authenticate } from '../../middleware/auth.js';
 import * as leaderboardService from './service.js';
 
 const router = Router();
@@ -19,10 +20,21 @@ router.get('/global', async (req: Request, res: Response, next: NextFunction) =>
   }
 });
 
-router.get('/weekly', async (_req: Request, res: Response, next: NextFunction) => {
+router.get('/weekly', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const limit = parseInt(_req.query.limit as string) || 20;
+    const limit = parseInt(req.query.limit as string) || 20;
     const leaderboard = await leaderboardService.getWeeklyLeaderboard(limit);
+    res.json({ success: true, data: leaderboard });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/friends', authenticate, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = (req as any).user?.userId;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const leaderboard = await leaderboardService.getFriendsLeaderboard(userId, limit);
     res.json({ success: true, data: leaderboard });
   } catch (error) {
     next(error);
@@ -40,11 +52,22 @@ router.get('/mock/:mockTestId', async (req: Request, res: Response, next: NextFu
   }
 });
 
-router.get('/battle', async (_req: Request, res: Response, next: NextFunction) => {
+router.get('/battle', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const limit = parseInt(_req.query.limit as string) || 20;
+    const limit = parseInt(req.query.limit as string) || 20;
     const leaderboard = await leaderboardService.getBattleLeaderboard(limit);
     res.json({ success: true, data: leaderboard });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/top-performers', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const timeRange = (req.query.timeRange as 'day' | 'week' | 'month') || 'week';
+    const limit = parseInt(req.query.limit as string) || 10;
+    const performers = await leaderboardService.getTopPerformers(timeRange, limit);
+    res.json({ success: true, data: performers });
   } catch (error) {
     next(error);
   }

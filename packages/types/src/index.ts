@@ -182,6 +182,9 @@ export interface IUserStats {
   longestStreak: number;
   dailySolved: number;
   dailyGoal: number;
+  totalXP: number;
+  weeklySolved: number[];
+  lastActiveDate: Date;
   subjectStats: Array<{
     subject: string;
     totalAttempted: number;
@@ -189,4 +192,109 @@ export interface IUserStats {
     accuracy: number;
     avgTime: number;
   }>;
+}
+
+export interface IMockAttempt {
+  _id: string;
+  userId: string;
+  mockTestId: string;
+  status: 'in_progress' | 'completed' | 'abandoned' | 'submitted';
+  totalScore: number;
+  percentile: number;
+  timeTaken: number;
+  startedAt: string;
+  completedAt?: string;
+}
+
+export interface IMockAnalysis {
+  _id: string;
+  userId: string;
+  mockTestId: string;
+  totalScore: number;
+  maxScore: number;
+  accuracy: number;
+  percentile: number;
+  sectionalAnalysis: Array<{
+    sectionType: string;
+    score: number;
+    accuracy: number;
+    correct: number;
+    wrong: number;
+  }>;
+  improvementSuggestions: string[];
+  strengths: string[];
+  weakAreas: string[];
+  comparedToLast: {
+    scoreChange: number;
+    accuracyChange: number;
+    percentileChange: number;
+    trend: 'improving' | 'declining' | 'stable';
+  };
+}
+
+export type BattleMode = '1v1' | 'topic_duel' | 'speed_challenge' | 'survival';
+export type BattleStatus = 'waiting' | 'ready' | 'in_progress' | 'completed' | 'cancelled';
+
+export interface IBattleRoom {
+  _id: string;
+  roomCode: string;
+  mode: BattleMode;
+  status: BattleStatus;
+  hostId: string;
+  opponentId?: string;
+  questionCount: number;
+  timeLimit: number;
+}
+
+export interface INotification {
+  _id: string;
+  type: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  data?: Record<string, unknown>;
+  createdAt: string;
+  actionUrl?: string;
+}
+
+export interface IBadge {
+  _id: string;
+  name: string;
+  description: string;
+  type: string;
+  icon: string;
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  xpReward: number;
+}
+
+export interface IRewardsStats {
+  xp: number;
+  streak: number;
+  badges: IBadge[];
+  achievements: Array<{
+    _id: string;
+    name: string;
+    description: string;
+    icon: string;
+    tier: string;
+    currentStep: number;
+    progress: number;
+    completedAt?: string;
+  }>;
+}
+
+export interface LeaderboardData {
+  rank: number;
+  userId: string;
+  name: string;
+  avatar?: string;
+  xp: number;
+  streak: number;
+  accuracy: number;
+  totalSolved: number;
+  weeklyXp: number;
+  battlesWon?: number;
+  battlesPlayed?: number;
+  mockRank?: number;
+  battleRank?: number;
 }

@@ -12,6 +12,8 @@ export interface IUser extends Document {
   provider: 'email' | 'google';
   onboardingCompleted: boolean;
   refreshToken?: string;
+  createdAt: Date;
+  updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
