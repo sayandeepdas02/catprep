@@ -52,7 +52,6 @@ const battleRoomSchema = new Schema<IBattleRoom>(
   { timestamps: true }
 );
 
-battleRoomSchema.index({ roomCode: 1 });
 battleRoomSchema.index({ status: 1 });
 battleRoomSchema.index({ hostId: 1 });
 battleRoomSchema.index({ opponentId: 1 });
