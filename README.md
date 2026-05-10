@@ -1,209 +1,92 @@
 # TechScholars - CAT Preparation Platform
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js" alt="Next.js">
-  <img src="https://img.shields.io/badge/TypeScript-5.7-blue?style=for-the-badge&logo=typescript" alt="TypeScript">
-  <img src="https://img.shields.io/badge/Node.js-20-green?style=for-the-badge&logo=node.js" alt="Node.js">
-  <img src="https://img.shields.io/badge/MongoDB-47B248?style=for-the-badge&logo=mongodb" alt="MongoDB">
-  <img src="https://img.shields.io/badge/Socket.io-000000?style=for-the-badge&logo=socket.io" alt="Socket.io">
-</p>
+A production-ready full-stack application for CAT (Common Admission Test) preparation featuring AI-powered recommendations, advanced analytics, study planning, and competitive gamification.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/github/last-commit/sayandeepdas02/catprep?style=for-the-badge&logo=git" alt="Last Commit">
-  <img src="https://img.shields.io/github/contributors/sayandeepdas02/catprep?style=for-the-badge&logo=github" alt="Contributors">
-</p>
+![TechScholars](https://img.shields.io/badge/Version-1.0.0-blue)
+![License](https://img.shields.io/badge/License-ISC-green)
+![Node](https://img.shields.io/badge/Node-18%2B-green)
 
----
+## Features
 
-## 📋 Table of Contents
+### Core Practice
+- **Topic-wise Practice**: Questions organized by subjects and topics
+- **Timed Practice**: Timed sessions for exam simulation
+- **Accuracy Mode**: Focus on improving accuracy
+- **Previous Year Questions (PYQ)**: Practice with past exam questions
 
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [API Documentation](#api-documentation)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+### Mock Tests
+- **Sectional Tests**: Subject-specific mock tests
+- **Full Length Tests**: Complete CAT simulation
+- **Adaptive Difficulty**: Questions adjust based on performance
 
----
+### Analytics & Insights
+- **Performance Dashboard**: Track progress with charts and graphs
+- **AI Recommendations**: Personalized study suggestions
+- **Heatmap Visualization**: Activity tracking
+- **Subject Breakdown**: Detailed accuracy analysis
 
-## 🎯 Overview
+### Gamification
+- **Battle Mode**: 1v1 real-time competitions
+- **Leaderboards**: Weekly and all-time rankings
+- **XP System**: Earn experience points
+- **Streaks**: Daily study streak tracking
+- **Achievements**: Unlock badges and rewards
 
-TechScholars is a production-grade CAT preparation platform focused on problem solving, mock tests, competitive analytics, and productivity tooling for CAT aspirants. Built with enterprise-level architecture, clean folder structure, and modular backend.
+### Productivity Tools
+- **Pomodoro Timer**: Focus sessions with breaks
+- **Study Planner**: Goal setting and tracking
+- **Kanban Tasks**: Organize study tasks
+- **Notes**: Save approaches and formulas
+- **Bookmarks**: Save important questions
 
----
-
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Frontend
-- **Framework**: Next.js 15+ (App Router)
-- **Language**: TypeScript
-- **Styling**: TailwindCSS
-- **UI Components**: shadcn/ui
-- **State Management**: Zustand
-- **Data Fetching**: TanStack Query
-- **Animations**: Framer Motion
-- **Forms**: React Hook Form + Zod
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **TailwindCSS** - Utility-first styling
+- **shadcn/ui** - Component library
+- **TanStack Query** - Data fetching
+- **Zustand** - State management
+- **Recharts** - Data visualization
 
 ### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Language**: TypeScript
-- **Database**: MongoDB + Mongoose
-- **Authentication**: JWT + Refresh Tokens
-- **Real-time**: Socket.IO
-- **Validation**: Zod
+- **Express.js** - Web framework
+- **MongoDB** - Database
+- **Mongoose** - ODM
+- **Socket.io** - Real-time communication
+- **JWT** - Authentication
+- **Winston** - Logging
 
-### DevOps
-- **Containerization**: Docker + Docker Compose
-- **Package Manager**: npm workspaces
-
----
-
-## ✨ Features
-
-### 🔐 Authentication
-- JWT-based authentication with access/refresh tokens
-- Google OAuth integration
-- Secure password hashing with bcrypt
-- Protected routes and session management
-
-### 📚 Practice Engine
-- MCQ, MSQ, and TITA question types
-- Subject-wise (Quantitative, LR, DI, Verbal) practice
-- Topic-wise difficulty filters
-- Timed practice sessions
-- Question bookmarking and notes
-
-### 📝 Mock Tests
-- Full-length CAT mocks
-- Sectional mocks (VARC, LRDI, QA)
-- Section timer locking
-- Real percentile estimation
-- Detailed analytics and analysis
-
-### ⚔️ Battlefield (Real-time)
-- 1v1 battles with Socket.IO
-- Live question solving
-- Real-time score sync
-- XP and rewards system
-
-### 🏆 Leaderboards
-- Global rankings
-- Weekly rankings
-- Mock test rankings
-- Battle mode rankings
-
-### 📊 Analytics
-- Accuracy tracking
-- Weak/strong topic analysis
-- Streak tracking
-- Speed vs accuracy charts
-
-### ⚙️ Settings
-- Profile management
-- Theme customization (dark/light)
-- Notification preferences
-- Study goals
-
----
-
-## 📂 Project Structure
-
-```
-techscholars/
-├── apps/
-│   ├── web/                    # Next.js frontend
-│   │   ├── src/
-│   │   │   ├── app/            # App Router pages
-│   │   │   ├── components/     # UI components
-│   │   │   ├── services/       # API services
-│   │   │   ├── stores/          # Zustand stores
-│   │   │   ├── hooks/           # Custom hooks
-│   │   │   ├── lib/             # Utilities
-│   │   │   └── providers/       # React providers
-│   │   ├── public/             # Static assets
-│   │   └── package.json
-│   │
-│   └── server/                 # Express.js backend
-│       ├── src/
-│       │   ├── modules/        # Feature modules
-│       │   │   ├── auth/        # Authentication
-│       │   │   ├── practice/    # Practice engine
-│       │   │   ├── mock/        # Mock tests
-│       │   │   ├── battle/      # Real-time battles
-│       │   │   ├── leaderboard/# Rankings
-│       │   │   ├── user/        # User management
-│       │   │   └── settings/    # User settings
-│       │   ├── middleware/      # Express middleware
-│       │   ├── database/        # MongoDB connection
-│       │   ├── utils/          # Utilities
-│       │   └── index.ts         # Server entry
-│       └── package.json
-│
-├── packages/
-│   ├── types/                  # Shared TypeScript types
-│   └── config/                 # Environment config
-│
-├── docker-compose.yml          # Docker orchestration
-├── package.json                # Root workspace
-├── tsconfig.json               # TypeScript config
-└── README.md                   # This file
-```
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-
 - Node.js 18+
-- MongoDB (local or Atlas)
-- npm or yarn
+- MongoDB 6+ (local or Atlas)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/sayandeepdas02/catprep.git
-cd catprep
+git clone <repository-url>
+cd ts
 
 # Install dependencies
 npm install
 
-# Build shared packages
-npm run build -w @techscholars/types
-npm run build -w @techscholars/config
-```
+# Create environment files
+cp apps/server/.env.example apps/server/.env
+cp apps/web/.env.example apps/web/.env
 
-### Development
+# Edit environment files with your values
 
-```bash
-# Start both frontend and backend
+# Start development servers
 npm run dev
-
-# Or start individually
-npm run dev:web    # Frontend: http://localhost:3000
-npm run dev:server # Backend: http://localhost:3001
 ```
 
-### Production Build
+### Environment Variables
 
-```bash
-npm run build
-```
-
----
-
-## 🔑 Environment Variables
-
-Create `.env` files based on the examples:
-
-### Server (`apps/server/.env`)
+**Server (apps/server/.env)**:
 ```env
 NODE_ENV=development
 PORT=3001
@@ -213,111 +96,156 @@ JWT_REFRESH_SECRET=your-super-secret-refresh-key-min-32-chars
 FRONTEND_URL=http://localhost:3000
 ```
 
-### Web (`apps/web/.env`)
+**Web (apps/web/.env)**:
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
+NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
----
+## Available Scripts
 
-## 📡 API Documentation
+```bash
+# Development
+npm run dev          # Start both servers
+npm run dev:web      # Start frontend only
+npm run dev:server   # Start backend only
+
+# Build
+npm run build        # Build both apps
+npm run build:web    # Build frontend
+npm run build:server # Build backend
+
+# Testing
+npm run typecheck    # Type check all apps
+npm test             # Run unit tests (server)
+
+# Linting
+npm run lint         # Lint all apps
+```
+
+## Project Structure
+
+```
+ts/
+├── apps/
+│   ├── web/                    # Next.js frontend
+│   │   ├── src/
+│   │   │   ├── app/           # App Router pages
+│   │   │   │   ├── dashboard/ # Dashboard pages
+│   │   │   │   ├── auth/      # Auth pages
+│   │   │   │   └── (marketing)/ # Landing page
+│   │   │   ├── components/    # React components
+│   │   │   ├── lib/           # Utilities & hooks
+│   │   │   ├── services/      # API client
+│   │   │   └── stores/        # Zustand stores
+│   │   └── public/            # Static assets
+│   │
+│   └── server/                # Express backend
+│       └── src/
+│           ├── modules/        # Feature modules
+│           │   ├── auth/      # Authentication
+│           │   ├── practice/  # Practice routes
+│           │   ├── mock/      # Mock tests
+│           │   ├── battle/    # Battle mode
+│           │   ├── analytics/ # Analytics & AI
+│           │   └── ...
+│           ├── middleware/     # Express middleware
+│           ├── utils/         # Utilities
+│           └── docs/          # API documentation
+│
+├── packages/
+│   ├── config/                # Shared config
+│   └── types/                 # Shared TypeScript types
+│
+├── DEPLOYMENT.md              # Deployment guide
+└── package.json               # Workspace config
+```
+
+## API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/refresh` - Refresh access token
-- `POST /api/auth/logout` - Logout user
-- `GET /api/auth/me` - Get current user
-
-### Questions
-- `GET /api/questions` - List questions with filters
-- `GET /api/questions/random` - Get random questions
-- `GET /api/questions/subjects` - List subjects
-- `GET /api/questions/subjects/:slug/topics` - List topics
+- `POST /api/auth/register` - Register user
+- `POST /api/auth/login` - Login
+- `POST /api/auth/refresh` - Refresh token
 
 ### Practice
-- `POST /api/practice/session/start` - Start practice session
+- `POST /api/practice/session/start` - Start session
 - `POST /api/practice/session/submit` - Submit answer
-- `POST /api/practice/session/:id/complete` - Complete session
-- `GET /api/practice/analytics` - Get user analytics
+- `GET /api/practice/bookmarks` - Get bookmarks
+- `GET /api/practice/notes` - Get notes
 
-### Mocks
-- `GET /api/mocks` - List mock tests
-- `POST /api/mocks/:id/start` - Start mock test
-- `POST /api/mocks/:id/complete` - Submit mock
-- `GET /api/mocks/:id/analysis` - Get analysis
+### Mock Tests
+- `GET /api/mocks` - List mocks
+- `POST /api/mocks/:id/start` - Start mock
+- `POST /api/mocks/:id/submit` - Submit mock
+
+### Analytics
+- `GET /api/analytics/stats` - Get stats
+- `GET /api/analytics/ai/recommendations` - AI recommendations
+- `GET /api/analytics/goals` - Study goals
 
 ### Battles
-- `POST /api/battles/create` - Create battle room
-- `POST /api/battles/join` - Join battle room
-- `GET /api/battles/history` - Get battle history
+- `POST /api/battles/create` - Create battle
+- `POST /api/battles/join` - Join battle
 
-### Leaderboard
-- `GET /api/leaderboard/global` - Global rankings
-- `GET /api/leaderboard/weekly` - Weekly rankings
-- `GET /api/leaderboard/battle` - Battle rankings
+## Pages
 
----
+| Route | Description |
+|-------|-------------|
+| `/` | Landing page |
+| `/dashboard` | Main dashboard |
+| `/dashboard/analytics` | Analytics dashboard |
+| `/dashboard/planner` | Study planner |
+| `/dashboard/pomodoro` | Pomodoro timer |
+| `/dashboard/tasks` | Kanban board |
+| `/dashboard/notes` | Notes |
+| `/dashboard/bookmarks` | Bookmarks |
+| `/dashboard/admin` | Admin panel |
+| `/auth/login` | Login page |
+| `/auth/register` | Register page |
 
-## 🐳 Deployment
+## Development
 
-### Docker
+### Adding New Features
+
+1. Create route handlers in appropriate module
+2. Add service functions for business logic
+3. Create React components in frontend
+4. Add TypeScript interfaces
+5. Write unit tests
+
+### Code Style
+
+- Use TypeScript for type safety
+- Follow existing patterns
+- Add JSDoc comments for complex functions
+- Write unit tests for new features
+
+## Testing
 
 ```bash
-# Build and run with Docker Compose
-docker-compose up --build
+# Run all tests
+npm test
 
-# Run in detached mode
-docker-compose up -d
+# Run tests in watch mode
+npm run test:watch
+
+# Run typecheck
+npm run typecheck
 ```
 
-### Manual Deployment
+## Deployment
 
-```bash
-# Build server
-cd apps/server
-npm run build
-npm start
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
-# Build frontend
-cd apps/web
-npm run build
-npm start
-```
+### Quick Deploy (Vercel + Railway)
 
-### Deployment Platforms
+1. Frontend: `vercel deploy apps/web`
+2. Backend: Connect Railway to `apps/server`
 
-- **Frontend**: Vercel, Netlify, Cloudflare Pages
-- **Backend**: Railway, Render, AWS EC2, DigitalOcean
-- **Database**: MongoDB Atlas
+## License
 
----
+ISC
 
-## 🤝 Contributing
+## Author
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
-
-**Sayandeep Das**
-- GitHub: [@sayandeepdas02](https://github.com/sayandeepdas02)
-
----
-
-## ⭐ Show your support
-
-Give a ⭐️ if this project helped you!
-
-<p align="center">Made with ❤️ for CAT Aspirants</p>
+Built with ❤️ for CAT aspirants
