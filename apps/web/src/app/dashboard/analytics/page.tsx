@@ -1,220 +1,198 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import {
-  TrendingUp,
-  TrendingDown,
-  Target,
-  Clock,
-  Flame,
-  Calendar,
-  BarChart3,
-} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { practiceService } from '@/services/practice-service';
-import type { IUserStats, IPracticeSession } from '@techscholars/types';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { apiClient } from '@/services/api-client';
+import { cn } from '@/lib/utils';
 
-export default function AnalyticsPage() {
-  const [analytics, setAnalytics] = useState<{
-    overall: IUserStats;
-    recentSessions: IPracticeSession[];
-    subjectStats: Array<{ subject: string; totalAttempted: number; correct: number; accuracy: number }>;
-    weakTopics: unknown[];
-    strongTopics: unknown[];
-  } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface Recommendation { type: string; priority: string; title: string; description: string; action: string; icon: string; topicId?: string; subject?: string; }
+interface TopicPerf { topicId: string; topicName: string; subject: string; attempted: number; correct: number; accuracy: number; trend: string; }
+interface Insight { title: string; value: string; trend: string; }
+interface AIRecommendations { recommendations: Recommendation[]; weakTopics: TopicPerf[]; insights: Insight[]; overallScore?: number; revisionPlan?: any[]; }
 
-  useEffect(() => {
-    practiceService.getAnalytics().then((res) => {
-      if (res.data) setAnalytics(res.data);
-      setIsLoading(false);
-    });
-  }, []);
+function RadarChart({ data }: { data: { subject: string; accuracy: number }[] }) {
+  const max = 100;
+  const cx = 150, cy = 150, r = 100;
+  const angleStep = (2 * Math.PI) / Math.max(data.length, 1);
+  
+  const points = data.map((d, i) => {
+    const angle = i * angleStep - Math.PI / 2;
+    const value = (d.accuracy / max) * r;
+    return { x: cx + value * Math.cos(angle), y: cy + value * Math.sin(angle) };
+  });
 
-  if (isLoading || !analytics) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-muted-foreground">Loading analytics...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const { overall, recentSessions, subjectStats } = analytics;
-
-  const weeklyData = [
-    { day: 'Mon', value: Math.floor(Math.random() * 20) },
-    { day: 'Tue', value: Math.floor(Math.random() * 20) },
-    { day: 'Wed', value: Math.floor(Math.random() * 20) },
-    { day: 'Thu', value: Math.floor(Math.random() * 20) },
-    { day: 'Fri', value: Math.floor(Math.random() * 20) },
-    { day: 'Sat', value: Math.floor(Math.random() * 20) },
-    { day: 'Sun', value: Math.floor(Math.random() * 20) },
-  ];
-
-  const maxValue = Math.max(...weeklyData.map((d) => d.value), 1);
+  const axisLines = data.map((_, i) => {
+    const angle = i * angleStep - Math.PI / 2;
+    return { x1: cx, y1: cy, x2: cx + r * Math.cos(angle), y2: cy + r * Math.sin(angle) };
+  });
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-6"
-    >
-      <div>
-        <h1 className="text-3xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground">Track your CAT preparation progress</p>
-      </div>
+    <svg viewBox="0 0 300 300" className="w-full max-w-md mx-auto">
+      <circle cx={cx} cy={cy} r={r * 0.25} fill="none" stroke="hsl(var(--muted))" strokeWidth="1" />
+      <circle cx={cx} cy={cy} r={r * 0.5} fill="none" stroke="hsl(var(--muted))" strokeWidth="1" />
+      <circle cx={cx} cy={cy} r={r * 0.75} fill="none" stroke="hsl(var(--muted))" strokeWidth="1" />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="hsl(var(--muted))" strokeWidth="1" />
+      {axisLines.map((l, i) => <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke="hsl(var(--muted))" strokeWidth="1" />)}
+      {data.length > 2 && <polygon points={points.map(p => `${p.x},${p.y}`).join(' ')} fill="hsl(221.2 83.2% 53.3% / 0.3)" stroke="hsl(221.2 83.2% 53.3%)" strokeWidth="2" />}
+      {points.map((p, i) => (
+        <g key={i}>
+          <circle cx={p.x} cy={p.y} r="4" fill="hsl(221.2 83.2% 53.3%)" />
+          <text x={p.x} y={cy + r + 20} textAnchor="middle" className="text-xs fill-foreground">{data[i]?.subject || ''}</text>
+        </g>
+      ))}
+    </svg>
+  );
+}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Questions Solved</p>
-                <p className="text-3xl font-bold">{overall.totalQuestionsSolved}</p>
-              </div>
-              <Target className="h-10 w-10 text-primary/20" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Accuracy</p>
-                <p className="text-3xl font-bold">{overall.overallAccuracy.toFixed(1)}%</p>
-              </div>
-              <TrendingUp className="h-10 w-10 text-green-500/20" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Current Streak</p>
-                <p className="text-3xl font-bold">{overall.currentStreak} days</p>
-              </div>
-              <Flame className="h-10 w-10 text-orange-500/20" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Today&apos;s Goal</p>
-                <p className="text-3xl font-bold">{overall.dailySolved}/{overall.dailyGoal}</p>
-              </div>
-              <Calendar className="h-10 w-10 text-blue-500/20" />
-            </div>
-            <Progress value={(overall.dailySolved / overall.dailyGoal) * 100} className="mt-2 h-2" />
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Weekly Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-end justify-between gap-2 h-40">
-              {weeklyData.map((day, index) => (
-                <div key={index} className="flex-1 flex flex-col items-center gap-2">
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={{ height: `${(day.value / maxValue) * 100}%` }}
-                    transition={{ delay: index * 0.1 }}
-                    className="w-full bg-primary rounded-t"
-                  />
-                  <span className="text-xs text-muted-foreground">{day.day}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Subject Performance</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {subjectStats.map((stat) => (
-              <div key={stat.subject} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium capitalize">{stat.subject}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                      {stat.correct}/{stat.totalAttempted}
-                    </span>
-                    <Badge
-                      variant={stat.accuracy >= 70 ? 'success' : stat.accuracy >= 50 ? 'warning' : 'destructive'}
-                    >
-                      {stat.accuracy.toFixed(0)}%
-                    </Badge>
-                  </div>
-                </div>
-                <Progress value={stat.accuracy} className="h-2" />
-              </div>
-            ))}
-            {subjectStats.length === 0 && (
-              <p className="text-center text-muted-foreground py-4">
-                No practice data yet. Start practicing to see your stats!
-              </p>
+function Heatmap({ data }: { data: { date: string; value: number }[] }) {
+  const max = Math.max(...(data.map(d => d.value).filter(Boolean)), 1);
+  return (
+    <div className="grid grid-cols-7 gap-1">
+      {data.map((d, i) => {
+        const intensity = d.value / max;
+        return (
+          <div
+            key={i}
+            className={cn(
+              'aspect-square rounded-sm',
+              intensity === 0 && 'bg-muted',
+              intensity > 0 && intensity < 0.25 && 'bg-primary/20',
+              intensity >= 0.25 && intensity < 0.5 && 'bg-primary/40',
+              intensity >= 0.5 && intensity < 0.75 && 'bg-primary/60',
+              intensity >= 0.75 && 'bg-primary/80'
             )}
-          </CardContent>
-        </Card>
+            title={`${new Date(d.date).toLocaleDateString()}: ${Math.round(d.value / 60)}min`}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+export default function AnalyticsPage() {
+  const [loading, setLoading] = useState(true);
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [recommendations, setRecommendations] = useState<AIRecommendations | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [analyticsRes, recRes] = await Promise.all([
+          apiClient.get<any>('/analytics/advanced'),
+          apiClient.get<any>('/analytics/ai/recommendations'),
+        ]);
+        setAnalytics(analyticsRes.data?.data);
+        setRecommendations(recRes.data?.data as AIRecommendations);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>;
+
+  const iconMap: Record<string, string> = { target: '🎯', timer: '⏱️', 'book-open': '📖', trophy: '🏆', star: '⭐', alert: '⚠️' };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Analytics & Insights</h1>
+          <p className="text-muted-foreground">AI-powered recommendations and performance analysis</p>
+        </div>
+        <Badge variant={recommendations?.recommendations.some(r => r.priority === 'high') ? 'destructive' : 'secondary'}>
+          {recommendations?.overallScore || 0}/100 Score
+        </Badge>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Sessions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {recentSessions.slice(0, 5).map((session, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between rounded-lg border p-4"
-              >
-                <div className="space-y-1">
-                  <p className="font-medium capitalize">{session.mode} Practice</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(session.startedAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold">
-                    {session.correctAnswers}/{session.answeredQuestions}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {session.answeredQuestions > 0
-                      ? ((session.correctAnswers / session.answeredQuestions) * 100).toFixed(0)
-                      : 0}%
-                  </p>
-                </div>
-              </div>
+      {recommendations && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {recommendations.recommendations.slice(0, 4).map((r, i) => (
+            <Card key={i} className={cn(r.priority === 'high' && 'border-destructive/50 bg-destructive/5')}>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <span>{iconMap[r.icon] || '📌'}</span>
+                  {r.title}
+                  <Badge variant={r.priority === 'high' ? 'destructive' : r.priority === 'medium' ? 'default' : 'secondary'} className="ml-auto">{r.priority}</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{r.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="topics">Topic Analysis</TabsTrigger>
+          <TabsTrigger value="activity">Activity</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            {recommendations?.insights?.map((insight, i) => (
+              <Card key={i}>
+                <CardContent className="pt-6">
+                  <div className="text-2xl font-bold">{insight.value}</div>
+                  <p className="text-sm text-muted-foreground">{insight.title}</p>
+                  <Badge variant={insight.trend === 'up' ? 'success' : insight.trend === 'down' ? 'destructive' : 'secondary'} className="mt-2">
+                    {insight.trend === 'up' ? '↑' : insight.trend === 'down' ? '↓' : '→'}
+                  </Badge>
+                </CardContent>
+              </Card>
             ))}
-            {recentSessions.length === 0 && (
-              <p className="text-center text-muted-foreground py-4">
-                No sessions yet. Start practicing!
-              </p>
-            )}
           </div>
-        </CardContent>
-      </Card>
-    </motion.div>
+
+          <Card>
+            <CardHeader><CardTitle>Subject Performance</CardTitle></CardHeader>
+            <CardContent>
+              <RadarChart data={analytics?.radarData || []} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="topics">
+          <Card>
+            <CardHeader><CardTitle>Weak Areas to Focus</CardTitle></CardHeader>
+            <CardContent>
+              {recommendations?.weakTopics?.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">No weak topics! You&apos;re doing great!</p>
+              ) : (
+                <div className="space-y-4">
+                  {recommendations?.weakTopics?.map((topic, i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium">{topic.topicName}</span>
+                          <Badge variant="outline">{topic.subject}</Badge>
+                        </div>
+                        <Progress value={topic.accuracy} className="h-2" />
+                      </div>
+                      <span className="text-sm text-muted-foreground w-16 text-right">{topic.accuracy.toFixed(0)}%</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="activity">
+          <Card>
+            <CardHeader><CardTitle>Study Heatmap (Last 30 Days)</CardTitle></CardHeader>
+            <CardContent>
+              <Heatmap data={analytics?.heatmapData || []} />
+              <p className="text-xs text-muted-foreground text-center mt-4">Darker = More study time</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
