@@ -27,8 +27,12 @@ export default function LoginPage() {
     setError('');
 
     try {
-      await authService.login({ email, password });
-      router.push('/dashboard');
+      const { user } = await authService.login({ email, password });
+      if (!(user as any)?.onboardingCompleted) {
+        router.push('/onboarding');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

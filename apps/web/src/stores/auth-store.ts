@@ -7,31 +7,45 @@ interface AuthState {
   tokens: AuthTokens | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  needsOnboarding: boolean;
   setUser: (user: User | null) => void;
   setTokens: (tokens: AuthTokens | null) => void;
   setLoading: (loading: boolean) => void;
   login: (user: User, tokens: AuthTokens) => void;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
+  completeOnboarding: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       tokens: null,
       isAuthenticated: false,
       isLoading: true,
-      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      needsOnboarding: true,
+      setUser: (user) => set({ user, isAuthenticated: !!user, needsOnboarding: !(user as any)?.onboardingCompleted }),
       setTokens: (tokens) => set({ tokens }),
       setLoading: (isLoading) => set({ isLoading }),
       login: (user, tokens) =>
-        set({ user, tokens, isAuthenticated: true, isLoading: false }),
+        set({ 
+          user, 
+          tokens, 
+          isAuthenticated: true, 
+          isLoading: false,
+          needsOnboarding: !(user as any)?.onboardingCompleted 
+        }),
       logout: () =>
-        set({ user: null, tokens: null, isAuthenticated: false, isLoading: false }),
+        set({ user: null, tokens: null, isAuthenticated: false, isLoading: false, needsOnboarding: true }),
       updateUser: (updates) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...updates } : null,
+        })),
+      completeOnboarding: () =>
+        set((state) => ({
+          needsOnboarding: false,
+          user: state.user ? { ...state.user, onboardingCompleted: true } as User : null,
         })),
     }),
     {
