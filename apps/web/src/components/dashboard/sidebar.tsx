@@ -10,23 +10,41 @@ import {
   FileText,
   Trophy,
   BarChart3,
-  Calendar,
-  Settings,
   ListOrdered,
+  Settings,
   ChevronLeft,
   ChevronRight,
   Zap,
+  Target,
+  Clock,
+  Bookmark,
+  BookOpen,
+  ListTodo,
+  Calendar,
+  TrendingUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const navItems = [
+const primaryNav = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/practice', label: 'Practice Arena', icon: Brain },
-  { href: '/dashboard/mocks', label: 'Mock Tests', icon: FileText },
-  { href: '/dashboard/battlefield', label: 'Battlefield', icon: Trophy },
+  { href: '/dashboard/practice', label: 'Practice', icon: Brain },
+  { href: '/mocks', label: 'Mocks', icon: FileText },
+  { href: '/battle', label: 'Battle Arena', icon: Trophy },
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
-  { href: '/dashboard/planner', label: 'Study Planner', icon: Calendar },
-  { href: '/dashboard/leaderboard', label: 'Leaderboard', icon: ListOrdered },
+  { href: '/leaderboard', label: 'Leaderboard', icon: ListOrdered },
+];
+
+const productivityNav = [
+  { href: '/dashboard/tasks', label: 'Tasks', icon: ListTodo },
+  { href: '/dashboard/planner', label: 'Planner', icon: Calendar },
+  { href: '/dashboard/pomodoro', label: 'Pomodoro', icon: Clock },
+  { href: '/dashboard/activity', label: 'Activity', icon: TrendingUp },
+  { href: '/dashboard/revision', label: 'Revision', icon: Target },
+];
+
+const toolsNav = [
+  { href: '/dashboard/bookmarks', label: 'Bookmarks', icon: Bookmark },
+  { href: '/dashboard/notes', label: 'Notes', icon: BookOpen },
 ];
 
 const bottomNavItems = [
@@ -68,8 +86,97 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           </Link>
         </div>
 
-        <nav className="flex-1 space-y-1 p-3">
-          {navItems.map((item) => {
+        <nav className="flex-1 space-y-1 p-3 overflow-y-auto">
+          {!collapsed && (
+            <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Main
+            </p>
+          )}
+          {primaryNav.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                  isActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                )}
+              >
+                <Icon
+                  className={cn(
+                    'h-5 w-5 shrink-0 transition-colors',
+                    isActive ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'
+                  )}
+                />
+                <AnimatePresence>
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      className="truncate"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Link>
+            );
+          })}
+
+          {!collapsed && (
+            <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">
+              Productivity
+            </p>
+          )}
+          {productivityNav.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                  isActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                )}
+              >
+                <Icon
+                  className={cn(
+                    'h-5 w-5 shrink-0 transition-colors',
+                    isActive ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'
+                  )}
+                />
+                <AnimatePresence>
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      className="truncate"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Link>
+            );
+          })}
+
+          {!collapsed && (
+            <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">
+              Tools
+            </p>
+          )}
+          {toolsNav.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
 
